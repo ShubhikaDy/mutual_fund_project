@@ -18,7 +18,6 @@ def explore_raw_datasets():
         print(f"\n================ Profiling File: {filename} ================")
         df = pd.read_csv(file_path)
         
-        # Print shape, types, and head
         print(f"Shape (Rows, Columns): {df.shape}")
         print("\nData Types:")
         print(df.dtypes)
@@ -32,17 +31,17 @@ def evaluate_fund_data():
     history_path = os.path.join(RAW_DIR, "nav_history.csv")
     
     if not os.path.exists(master_path) or not os.path.exists(history_path):
-        print("\nNote: fund_master.csv or nav_history.csv are not in data/raw/ yet. Skipping validation step.")
+        print(f"\nNote: Missing {master_path} or {history_path}. Skipping validation step.")
         return
 
     fund_master = pd.read_csv(master_path)
     nav_history = pd.read_csv(history_path)
 
-    # Count unique elements
+    # Count unique elements using the real dataset headers
     print(f"Unique Fund Houses: {fund_master['fund_house'].nunique() if 'fund_house' in fund_master else 'N/A'}")
     print(f"Unique Categories: {fund_master['category'].nunique() if 'category' in fund_master else 'N/A'}")
     print(f"Unique Sub-Categories: {fund_master['sub_category'].nunique() if 'sub_category' in fund_master else 'N/A'}")
-    print(f"Unique Risk Grades: {fund_master['risk_grade'].nunique() if 'risk_grade' in fund_master else 'N/A'}")
+    print(f"Unique Risk Grades: {fund_master['risk_category'].nunique() if 'risk_category' in fund_master else 'N/A'}")
 
     # Validate that every code in master exists in history
     if 'amfi_code' in fund_master and 'amfi_code' in nav_history:
@@ -53,7 +52,7 @@ def evaluate_fund_data():
         
         print("\n--- Data Quality Summary ---")
         if len(missing_in_history) == 0:
-            print("Validation Passed: Every code in fund_master exists in nav_history.")
+            print("Validation Passed: Every code in fund_master matches an entry in nav_history.")
         else:
             print(f"Validation Warning: {len(missing_in_history)} codes in fund_master are missing from nav_history.")
     else:
